@@ -30,12 +30,16 @@ pipeline {
         }
 
         stage('Build DEB using FPM') {
-            steps {
-                bat '''
-                fpm -s dir -t deb -n hello-java -v 1.0.%BUILD_NUMBER% -C package .
-                '''
-            }
-        }
+    steps {
+        bat '''
+        docker run --rm ^
+        -v %cd%:/app ^
+        -w /app ^
+        ruby:3 ^
+        bash -c "gem install fpm && fpm -s dir -t deb -n hello-java -v 1.0.%BUILD_NUMBER% -C package ."
+        '''
+    }
+}
     }
 
     post {
